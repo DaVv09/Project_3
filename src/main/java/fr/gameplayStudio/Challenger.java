@@ -6,8 +6,8 @@ public class Challenger  extends ModeDeJeu{
     }
 
     @Override
-    public int generate() {
-        return super.generate();
+    public void generate() {
+        super.generate();
     }
 
     @Override

@@ -4,17 +4,18 @@ import java.util.Random;
 
 public abstract class ModeDeJeu {
     public Mode mode;
-    // limite de 10digit (int)
+
+    public boolean modeDevellopeur=true;
     public int combinaisonSecrete;
-    //taille par default
-    public int tailleCombinaisonSecrete = 4;
-    public String[] tableauStringStockageCombinaisonSecrete = new String[tailleCombinaisonSecrete];
+    public int random;
+
+    public int tailleCombinaisonSecrete = 4; // default 4
+    public int nombreDEsssais = 8;
     public int[] tableauIntStockageProposition = new int[tailleCombinaisonSecrete];
+
+    public String[] tableauStringStockageCombinaisonSecrete = new String[tailleCombinaisonSecrete];
     public String[] tableauStringStockageProposition = new String[tailleCombinaisonSecrete];
-    String[] tableauReponse = new String[tailleCombinaisonSecrete];
-    // 1ere colonne = combinaison secrete
-    // 2eme colonne = proposition
-    // 3eme colonne = resultat
+    public String[] tableauReponse = new String[tailleCombinaisonSecrete];
     public String[][] tableauStringStockageSecretPropositionReponse = new String[tailleCombinaisonSecrete][3];
 
 
@@ -23,16 +24,13 @@ public abstract class ModeDeJeu {
         this.mode = mode;
     }
 
-    public int generate() {
+    public void generate() {
         Random randomNb = new Random();
-        int combinaisonSecreteTemp = randomNb.nextInt();
-        // si la taille de la combinaison secrete générée est plus grande que la tailleCombinaisonSecrete (taille max pour jouer)
-        // alors on utilise substring pour ne prend que les X dernier chiffre pour faire notre combinaison secrete
-        if (String.valueOf(combinaisonSecreteTemp).length() > tailleCombinaisonSecrete) {
-            String stringCombinaisonSecreteTemp = String.valueOf(combinaisonSecreteTemp).substring(String.valueOf(combinaisonSecreteTemp).length() - tailleCombinaisonSecrete);
-            combinaisonSecrete = Integer.parseInt(stringCombinaisonSecreteTemp);
+        random = randomNb.nextInt();
+        if (String.valueOf(random).length() > tailleCombinaisonSecrete) {
+            String randomTemp = String.valueOf(random).substring(String.valueOf(random).length() - tailleCombinaisonSecrete);
+            random = Integer.parseInt(randomTemp);
         }
-        return combinaisonSecrete;
     }
 
     public String storeData(String proposition) {
@@ -44,8 +42,9 @@ public abstract class ModeDeJeu {
             for (int i = 0; i < tailleCombinaisonSecrete; i++) {
                 tableauStringStockageSecretPropositionReponse[i][0] = tableauStringStockageCombinaisonSecrete[i]; // secret
                 tableauStringStockageSecretPropositionReponse[i][1] = tableauStringStockageProposition[i]; // proposition
-                //dev debug
-                //System.out.println("secret= " + tableauStringStockageSecretPropositionReponse[i][0] + " Proposition = " + tableauStringStockageSecretPropositionReponse[i][1]);
+                if(modeDevellopeur) {
+                    System.out.println("secret= " + tableauStringStockageSecretPropositionReponse[i][0] + " Proposition = " + tableauStringStockageSecretPropositionReponse[i][1]);
+                }
                 if (Integer.valueOf(tableauStringStockageSecretPropositionReponse[i][1]) > Integer.valueOf(tableauStringStockageSecretPropositionReponse[i][0])) { // proposition > secret
                     tableauStringStockageSecretPropositionReponse[i][2] = "-";
                 } else if (Integer.valueOf(tableauStringStockageSecretPropositionReponse[i][1]) < Integer.valueOf(tableauStringStockageSecretPropositionReponse[i][0])) {
@@ -58,8 +57,9 @@ public abstract class ModeDeJeu {
                 tableauReponse[i] = tableauStringStockageSecretPropositionReponse[i][2];
             }
             String reponse = String.join("", (tableauReponse));
-            //dev debug
-            //System.out.println(reponse);
+            if(modeDevellopeur) {
+                System.out.println(reponse);
+            }
             return reponse;
         }
         return "XXXX";
@@ -68,77 +68,33 @@ public abstract class ModeDeJeu {
 
     public String newPurpose() {
         for (int i = 0; i < tailleCombinaisonSecrete; i++) {
-            int oldPurposal = Integer.parseInt(tableauStringStockageSecretPropositionReponse[i][i]);
-            switch (tableauStringStockageSecretPropositionReponse[i][i]) {
+            int oldPurposal = Integer.parseInt(tableauStringStockageSecretPropositionReponse[i][1]); // interroge colonne "proposition"
+            switch (tableauStringStockageSecretPropositionReponse[i][2]) {
                 case "-":
-                    tableauIntStockageProposition[i] = oldPurposal--;
+                    oldPurposal--;
+                    int newPurposal=oldPurposal;
+                    tableauIntStockageProposition[i] = (newPurposal);
+                    tableauStringStockageSecretPropositionReponse[i][1]=String.valueOf(tableauIntStockageProposition[i]);
                     break;
                 case "+":
-                    tableauIntStockageProposition[i] = oldPurposal++;
+                    oldPurposal++;
+                    newPurposal=oldPurposal;
+                    tableauIntStockageProposition[i] = (newPurposal);
+                    tableauStringStockageSecretPropositionReponse[i][1]=String.valueOf(tableauIntStockageProposition[i]);
                     break;
                 case "=":
                     tableauIntStockageProposition[i] = oldPurposal;
+                    tableauStringStockageSecretPropositionReponse[i][1]=String.valueOf(tableauIntStockageProposition[i]);
                     break;
             }
         }
-        String newPurpose = String.join("", String.valueOf(tableauIntStockageProposition));
+        for (int i = 0; i < tailleCombinaisonSecrete; i++) {
+            tableauStringStockageProposition[i] = tableauStringStockageSecretPropositionReponse[i][1];
+        }
+        String newPurpose = String.join("", tableauStringStockageProposition);
         return newPurpose;
     }
 }
-
-
-
-
-    /*
-        public void storeProposition(String proposition) {
-            if (proposition.length() != tailleCombinaisonSecrete) {
-                System.out.println("Vous avez fait une erreur dans votre proposition celle-ci ne comprend pas autant de chiffres (" + tailleCombinaisonSecrete + ") à découvrir");
-            } else {
-                tableauStringStockageProposition = String.valueOf(proposition).split("");
-                for (int i = 0; i < tailleCombinaisonSecrete - 1; i++) {
-                    tableauIntStockageProposition[i] = Integer.parseInt(tableauStringStockageProposition[i]);
-                }
-            }
-        }
-    */
-    /*
-    public void newPurposalIA() {
-        for (int i = 0; i < tailleCombinaisonSecrete; i++) {
-            int oldPurposal = Integer.parseInt(tableauStringStockageSecretPropositionReponse[i][i][0]);
-            switch (tableauStringStockageIA[i][1]) {
-                case "-":
-                    tableauIntStockageProposition[i] = oldPurposal--;
-                    break;
-                case "+":
-                    tableauIntStockageProposition[i] = oldPurposal++;
-                    break;
-                case "=":
-                    tableauIntStockageProposition[i] = oldPurposal;
-                    break;
-            }
-        }
-    }
-
-     */
-    /*
-    public String compare() {
-        for (int i = 0; i <= tailleCombinaisonSecrete - 1; i++) {
-            if (tableauIntStockageProposition[i] > tableauIntStockageCombinaisonSecrete[i]) {
-                //System.out.print("-");
-                tableauReponse[i] = "-";
-            } else if (tableauIntStockageProposition[i] < tableauIntStockageCombinaisonSecrete[i]) {
-                //System.out.print("+");
-                tableauReponse[i] = "+";
-            } else {
-                //System.out.print("=");
-                tableauReponse[i] = "=";
-            }
-        }
-        String reponse = String.join("", tableauReponse);
-        return reponse;
-    }
-
- */
 
 
 

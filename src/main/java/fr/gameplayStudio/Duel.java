@@ -7,10 +7,14 @@ public class Duel extends ModeDeJeu{
     }
 
     @Override
-    public int generate() {
-        return super.generate();
+    public void generate() {
+        super.generate();
     }
 
+    @Override
+    public String storeData(String proposition) {
+        return super.storeData(proposition);
+    }
 
     @Override
     public String newPurpose() {
