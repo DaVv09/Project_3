@@ -7,14 +7,11 @@ import static fr.gameplayStudio.Mode.*;
 public class App {
     public static void main(String[] args) {
 
-        //rejouer
-        boolean rejouer = true;
-        //changer de mode de jeu
-        boolean changer = true;
 
 
         Scanner sc = new Scanner(System.in);
-
+        //changer de mode de jeu
+        boolean changer = true;
         while (changer) {
             System.out.println("Veuillez selectionner un mode de jeu : (" + CHALLENGER.ordre + ") " + CHALLENGER + " | (" + DEFENSEUR.ordre + ") " + DEFENSEUR + " | (" + DUEL.ordre + ") " + DUEL + "");
             int choixModeDeJeu = sc.nextInt();
@@ -24,7 +21,8 @@ public class App {
             if (choixModeDeJeu == CHALLENGER.ordre) {
                 ModeDeJeu challenger = new Challenger(CHALLENGER);
                 System.out.println("Vous avez selectionner le mode : " + CHALLENGER + "");
-
+                //rejouer
+                boolean rejouer = true;
                 while (rejouer) {
                     challenger.generate();// genere un nombre secret
                     challenger.combinaisonSecrete = challenger.random;
@@ -45,38 +43,47 @@ public class App {
                             invalide = false;
                         }
                     }
-                    String recommencer;
+                    boolean ok;
                     do {
                         System.out.println("voulez-vous (R)ejouer ? (C)hanger de mode ? (Q)uitter ?");
-                        recommencer = sc.nextLine();
+                        String recommencer = sc.nextLine();
                         if (recommencer.equalsIgnoreCase("R") | recommencer.equalsIgnoreCase("Rejouer")) {
                             rejouer = true;
                             changer = false;
+                            ok = true;
                         } else if (recommencer.equalsIgnoreCase("C") | recommencer.equalsIgnoreCase("Changer")) {
                             rejouer = false;
                             changer = true;
+                            ok = true;
                         } else if (recommencer.equalsIgnoreCase("Q") | recommencer.equalsIgnoreCase("Quitter")) {
                             rejouer = false;
                             changer = false;
+                            ok = true;
                         } else {
                             System.out.println("Désolé, je n'ai pas compris votre choix.");
+                            ok = false;
                         }
-                    }
-                    while (!recommencer.equalsIgnoreCase("Q") | !recommencer.equalsIgnoreCase("Quitter")|!recommencer.equalsIgnoreCase("R") | !recommencer.equalsIgnoreCase("Rejouer")|!recommencer.equalsIgnoreCase("C") | !recommencer.equalsIgnoreCase("Changer"));
+                    } while (!ok);
                 }
+
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             } else if (choixModeDeJeu == DEFENSEUR.ordre) {
                 ModeDeJeu defenseur = new Defenseur(DEFENSEUR);
                 System.out.println("Vous avez selectionner le mode : " + DEFENSEUR + "");
+                //rejouer
+                boolean rejouer = true;
                 while (rejouer) {
+                    //init nombre d'essai
+                    defenseur.compteurEssai = 0;
                     System.out.println("Vous devez definir la combinaison secrete (seulement des chiffres), l'ordinateur devra retrouver celle ci.");
                     String combiSecrete = sc.nextLine();
                     defenseur.combinaisonSecrete = (Integer.parseInt(combiSecrete)); // stock notre combinaison secrete
                     boolean invalide = true;
                     defenseur.generate(); // genere un nombre aleatoire de xxxx digit
                     String iaPurposal = String.valueOf(defenseur.random); // genere un nombre aleatoire de xxxx digit
-                    // System.out.println(iaPurposal);
+                    //compteur d'essai incrémenter une fois la 1er proposition generer
+                    defenseur.compteurEssai++;
                     while (invalide) {
                         String reponse = defenseur.storeData(iaPurposal); // stock  secret & proposition & compare -> reponse
                         System.out.println("votre combinaision secrete :" + combiSecrete + " la suggestion de l'ordi : " + iaPurposal + " (" + reponse + ")");
@@ -84,29 +91,73 @@ public class App {
                         if (iaPurposal.equals(combinaisonSecrete)) {
                             invalide = false;
                         } else {
-                            iaPurposal = defenseur.newPurpose();  // regenere une nouvbelle reponse en fonction de la reponse +/-/=
+                            if (defenseur.compteurEssai >= defenseur.nbEssai) {
+                                System.out.println("Bravo, vous avez battu l'ordinateur. il n'a pas réussit a retrouver votre combinaison en moins de " + defenseur.nbEssai + " essais.");
+                                break;
+                            } else {
+                                iaPurposal = defenseur.newPurpose();  // regenere une nouvelle reponse en fonction de la reponse +/-/=
+                                defenseur.compteurEssai++;
+                            }
                         }
+                        boolean ok;
+                        do {
+                            System.out.println("voulez-vous (R)ejouer ? (C)hanger de mode ? (Q)uitter ?");
+                            String recommencer = sc.nextLine();
+                            if (recommencer.equalsIgnoreCase("R") | recommencer.equalsIgnoreCase("Rejouer")) {
+                                rejouer = true;
+                                changer = false;
+                                ok = true;
+                            } else if (recommencer.equalsIgnoreCase("C") | recommencer.equalsIgnoreCase("Changer")) {
+                                rejouer = false;
+                                changer = true;
+                                ok = true;
+                            } else if (recommencer.equalsIgnoreCase("Q") | recommencer.equalsIgnoreCase("Quitter")) {
+                                rejouer = false;
+                                changer = false;
+                                ok = true;
+                            } else {
+                                System.out.println("Désolé, je n'ai pas compris votre choix.");
+                                ok = false;
+                            }
+                        } while (!ok);
                     }
+                }
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            } else if (choixModeDeJeu == DUEL.ordre) {
+                ModeDeJeu duel = new Duel(DUEL);
+                System.out.println("Vous avez selectionner le mode : " + DUEL + "");
+                boolean rejouer = true;
+                while (rejouer) {
+
+
+
+
+
+                boolean ok;
+                do {
                     System.out.println("voulez-vous (R)ejouer ? (C)hanger de mode ? (Q)uitter ?");
                     String recommencer = sc.nextLine();
                     if (recommencer.equalsIgnoreCase("R") | recommencer.equalsIgnoreCase("Rejouer")) {
                         rejouer = true;
                         changer = false;
+                        ok = true;
                     } else if (recommencer.equalsIgnoreCase("C") | recommencer.equalsIgnoreCase("Changer")) {
                         rejouer = false;
                         changer = true;
+                        ok = true;
                     } else if (recommencer.equalsIgnoreCase("Q") | recommencer.equalsIgnoreCase("Quitter")) {
                         rejouer = false;
                         changer = false;
+                        ok = true;
                     } else {
                         System.out.println("Désolé, je n'ai pas compris votre choix.");
+                        ok = false;
                     }
-                }
-
-
-            } else if (choixModeDeJeu == DUEL.ordre) {
-                ModeDeJeu duel = new Duel(DUEL);
-                System.out.println("Vous avez selectionner le mode : " + DUEL + "");
+                } while (!ok);
+            }
+ //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             } else {
                 System.out.println("Le mode de jeu selectionné n'existe pas");
             }

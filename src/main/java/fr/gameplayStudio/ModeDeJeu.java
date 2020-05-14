@@ -1,6 +1,7 @@
 package fr.gameplayStudio;
 
 import java.util.Random;
+import java.util.Scanner;
 
 public abstract class ModeDeJeu {
     public Mode mode;
@@ -10,7 +11,8 @@ public abstract class ModeDeJeu {
     public int random;
 
     public int tailleCombinaisonSecrete = 4; // default 4
-    public int nombreDEsssais = 8;
+    public int nbEssai = 8;
+    public int compteurEssai =0 ;
     public int[] tableauIntStockageProposition = new int[tailleCombinaisonSecrete];
 
     public String[] tableauStringStockageCombinaisonSecrete = new String[tailleCombinaisonSecrete];
@@ -42,9 +44,9 @@ public abstract class ModeDeJeu {
             for (int i = 0; i < tailleCombinaisonSecrete; i++) {
                 tableauStringStockageSecretPropositionReponse[i][0] = tableauStringStockageCombinaisonSecrete[i]; // secret
                 tableauStringStockageSecretPropositionReponse[i][1] = tableauStringStockageProposition[i]; // proposition
-                if(modeDevellopeur) {
+               /* if(modeDevellopeur) {
                     System.out.println("secret= " + tableauStringStockageSecretPropositionReponse[i][0] + " Proposition = " + tableauStringStockageSecretPropositionReponse[i][1]);
-                }
+                }*/
                 if (Integer.valueOf(tableauStringStockageSecretPropositionReponse[i][1]) > Integer.valueOf(tableauStringStockageSecretPropositionReponse[i][0])) { // proposition > secret
                     tableauStringStockageSecretPropositionReponse[i][2] = "-";
                 } else if (Integer.valueOf(tableauStringStockageSecretPropositionReponse[i][1]) < Integer.valueOf(tableauStringStockageSecretPropositionReponse[i][0])) {
@@ -57,13 +59,14 @@ public abstract class ModeDeJeu {
                 tableauReponse[i] = tableauStringStockageSecretPropositionReponse[i][2];
             }
             String reponse = String.join("", (tableauReponse));
-            if(modeDevellopeur) {
+           /* if(modeDevellopeur) {
                 System.out.println(reponse);
-            }
+            }*/
             return reponse;
         }
         return "XXXX";
     }
+
 
 
     public String newPurpose() {

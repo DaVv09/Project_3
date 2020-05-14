@@ -5,6 +5,7 @@ public  class Defenseur extends ModeDeJeu {
         super(mode);
     }
 
+
     @Override
     public void generate() {
         super.generate();
