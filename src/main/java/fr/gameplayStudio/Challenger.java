@@ -1,22 +1,42 @@
 package fr.gameplayStudio;
 
-public class Challenger  extends ModeDeJeu{
-   public Challenger(Mode mode) {
+public class Challenger extends ModeDeJeu {
+    public Challenger(Mode mode) {
         super(mode);
     }
 
     @Override
-    public void generate() {
-        super.generate();
+    public int generate() {
+        return super.generate();
     }
 
     @Override
-    public String storeData(String proposition) {
-        return super.storeData(proposition);
+    public void storePropositionJoueur(String proposition) {
+        super.storePropositionJoueur(proposition);
     }
 
     @Override
-    public String newPurpose() {
-        return super.newPurpose();
+    public void storeSecretJoueur(String secret) {
+        super.storeSecretJoueur(secret);
+    }
+
+    @Override
+    public String compareJoueurXIA() {
+        return super.compareJoueurXIA();
+    }
+
+    @Override
+    public void storeSecretIA(int secret) {
+        super.storeSecretIA(secret);
+    }
+
+    @Override
+    public void storePropositionIA(String proposition) {
+        super.storePropositionIA(proposition);
+    }
+
+    @Override
+    public String compareIAXJoueur() {
+        return super.compareIAXJoueur();
     }
 }

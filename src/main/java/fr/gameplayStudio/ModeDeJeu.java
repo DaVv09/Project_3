@@ -1,103 +1,164 @@
 package fr.gameplayStudio;
 
 import java.util.Random;
-import java.util.Scanner;
 
 public abstract class ModeDeJeu {
+
+    //declaration des variables
     public Mode mode;
+    public boolean modeDevellopeur = true; // devra pointer sur un XML de config
+    public int tailleCombinaison = 4; // default 4  & devra pointer sur un XML de config
 
-    public boolean modeDevellopeur=true;
-    public int combinaisonSecrete;
-    public int random;
+    //----------------------------------------------------------
+    //------------------- variable pour l'IA -------------------
+    //----------------------------------------------------------
 
-    public int tailleCombinaisonSecrete = 4; // default 4
-    public int nbEssai = 8;
-    public int compteurEssai =0 ;
-    public int[] tableauIntStockageProposition = new int[tailleCombinaisonSecrete];
 
-    public String[] tableauStringStockageCombinaisonSecrete = new String[tailleCombinaisonSecrete];
-    public String[] tableauStringStockageProposition = new String[tailleCombinaisonSecrete];
-    public String[] tableauReponse = new String[tailleCombinaisonSecrete];
-    public String[][] tableauStringStockageSecretPropositionReponse = new String[tailleCombinaisonSecrete][3];
+    public int combinaisonSecreteIA;
+    final public int tentativeIA = 8; // default 8 & devra pointer sur un XML de config
+    public int compteurTentativeIA = 0; // initialise a 0
+    // [0] combi secrete IA [1] proposition IA [2] difference joueur.secret & IA.proposition ( aStringDonneeJoueur[i][2] = aStringDonneeJoueur[i][1] compare aStringDonneeIA[i][0] )
+    public String[][] aStringDonneeIA = new String[tailleCombinaison][3];
 
+
+    //----------------------------------------------------------
+    //----------------- variable pour le joueur ----------------
+    //----------------------------------------------------------
+    public int combinaisonSecretejoueur;
+    final public int tentativeJoueur = 8; // default 8 & devra pointer sur un XML de config
+    public int compteurTentativeIJoueur = 0; // initialise a 0
+    public String[][] aStringDonneeJoueur = new String[tailleCombinaison][3];
 
     //constructeur
     public ModeDeJeu(Mode mode) {
         this.mode = mode;
     }
 
-    public void generate() {
+    //methodes
+    public int generate() {
         Random randomNb = new Random();
-        random = randomNb.nextInt();
-        if (String.valueOf(random).length() > tailleCombinaisonSecrete) {
-            String randomTemp = String.valueOf(random).substring(String.valueOf(random).length() - tailleCombinaisonSecrete);
+        int random = randomNb.nextInt();
+        if (String.valueOf(random).length() > tailleCombinaison) {
+            String randomTemp = String.valueOf(random).substring(String.valueOf(random).length() - tailleCombinaison);
             random = Integer.parseInt(randomTemp);
+            return random;
+        }
+        return random;
+    }
+
+    public void storePropositionJoueur(String proposition) {
+        //creer un tableau temp pour stocker la combinaison afin de la mettre dans le tableau joueur
+        String[] aStringPropositionTemp = new String[tailleCombinaison];
+        aStringPropositionTemp = String.valueOf(proposition).split("");
+        for (int i = 0; i <= tailleCombinaison - 1; i++) {
+            aStringDonneeJoueur[i][1] = aStringPropositionTemp[i];
         }
     }
 
-    public String storeData(String proposition) {
-        if (proposition.length() != tailleCombinaisonSecrete) {
-            System.out.println("votre proposition ne comporte pas le nombre de chiffre attendu (" + tailleCombinaisonSecrete + ")");
-        } else {
-            tableauStringStockageCombinaisonSecrete = String.valueOf(combinaisonSecrete).split(""); // stock le split de la combi secrete dans un tableau temporaire
-            tableauStringStockageProposition = String.valueOf(proposition).split(""); // stock le split de la proposition dans un tableau temporaire
-            for (int i = 0; i < tailleCombinaisonSecrete; i++) {
-                tableauStringStockageSecretPropositionReponse[i][0] = tableauStringStockageCombinaisonSecrete[i]; // secret
-                tableauStringStockageSecretPropositionReponse[i][1] = tableauStringStockageProposition[i]; // proposition
-               /* if(modeDevellopeur) {
-                    System.out.println("secret= " + tableauStringStockageSecretPropositionReponse[i][0] + " Proposition = " + tableauStringStockageSecretPropositionReponse[i][1]);
-                }*/
-                if (Integer.valueOf(tableauStringStockageSecretPropositionReponse[i][1]) > Integer.valueOf(tableauStringStockageSecretPropositionReponse[i][0])) { // proposition > secret
-                    tableauStringStockageSecretPropositionReponse[i][2] = "-";
-                } else if (Integer.valueOf(tableauStringStockageSecretPropositionReponse[i][1]) < Integer.valueOf(tableauStringStockageSecretPropositionReponse[i][0])) {
-                    tableauStringStockageSecretPropositionReponse[i][2] = "+";
-                } else if (Integer.valueOf(tableauStringStockageSecretPropositionReponse[i][1]) == Integer.valueOf(tableauStringStockageSecretPropositionReponse[i][0])) {
-                    tableauStringStockageSecretPropositionReponse[i][2] = "=";
-                }
-            }
-            for (int i = 0; i < tailleCombinaisonSecrete; i++) {
-                tableauReponse[i] = tableauStringStockageSecretPropositionReponse[i][2];
-            }
-            String reponse = String.join("", (tableauReponse));
-           /* if(modeDevellopeur) {
-                System.out.println(reponse);
-            }*/
-            return reponse;
+    public void storeSecretJoueur(String secret) {
+        combinaisonSecretejoueur = Integer.parseInt(secret);
+        //creer un tableau temp pour stocker le secret afin de le mettre dans le tableau joueur
+        String[] aStringSecretTemp = new String[tailleCombinaison];
+        aStringSecretTemp = String.valueOf(secret).split("");
+        for (int i = 0; i <= tailleCombinaison - 1; i++) {
+            aStringDonneeJoueur[i][0] = aStringSecretTemp[i];
         }
-        return "XXXX";
+    }
+
+    public String compareJoueurXIA() {
+        for (int i = 0; i <= tailleCombinaison - 1; i++) {
+            // cast String en Int pour effectuer la comparaison
+            if (Integer.parseInt(aStringDonneeJoueur[i][1]) < Integer.parseInt(aStringDonneeIA[i][0])) {
+                aStringDonneeJoueur[i][2] = "+";
+            } else if (Integer.parseInt(aStringDonneeJoueur[i][1]) > Integer.parseInt(aStringDonneeIA[i][0])) {
+                aStringDonneeJoueur[i][2] = "-";
+            } else {
+                aStringDonneeJoueur[i][2] = "=";
+            }
+        }
+        // Creer un tableau temporaire pour stocker la reponse uniquement afin de la retourner
+        String[] aStringReponseTemp = new String[tailleCombinaison];
+        for (int i = 0; i <= tailleCombinaison - 1; i++) {
+            aStringReponseTemp[i] = aStringDonneeJoueur[i][2];
+        }
+        // prend chaque valeurs du tableau et les retranscript  en un string
+        String reponse = String.join("", (aStringReponseTemp));
+        return reponse;
     }
 
 
+    public void storeSecretIA(int secret) {
+        combinaisonSecreteIA = secret;
+        //creer un tableau temp pour stocker le secret afin de le mettre dans le tableau IA
+        String[] aStringSecretTemp = new String[tailleCombinaison];
+        aStringSecretTemp = String.valueOf(secret).split("");
 
-    public String newPurpose() {
-        for (int i = 0; i < tailleCombinaisonSecrete; i++) {
-            int oldPurposal = Integer.parseInt(tableauStringStockageSecretPropositionReponse[i][1]); // interroge colonne "proposition"
-            switch (tableauStringStockageSecretPropositionReponse[i][2]) {
+        for (int i = 0; i <= tailleCombinaison - 1; i++) {
+            aStringDonneeIA[i][0] = aStringSecretTemp[i];
+        }
+    }
+
+    public void storePropositionIA(String proposition) {
+        //creer un tableau temp pour stocker la combinaison afin de la mettre dans le tableau IA
+        String[] aStringPropositionTemp = new String[tailleCombinaison];
+        aStringPropositionTemp = String.valueOf(proposition).split("");
+        for (int i = 0; i <= tailleCombinaison - 1; i++) {
+            aStringDonneeIA[i][1] = aStringPropositionTemp[i];
+        }
+    }
+
+    public String compareIAXJoueur() {
+        for (int i = 0; i <= tailleCombinaison - 1; i++) {
+            // cast String en Int pour effectuer la comparaison
+            if (Integer.parseInt(aStringDonneeIA[i][1]) < Integer.parseInt(aStringDonneeJoueur[i][0])) {
+                aStringDonneeIA[i][2] = "+";
+            } else if (Integer.parseInt(aStringDonneeIA[i][1]) > Integer.parseInt(aStringDonneeJoueur[i][0])) {
+                aStringDonneeIA[i][2] = "-";
+            } else {
+                aStringDonneeIA[i][2] = "=";
+            }
+        }
+        // Creer un tableau temporaire pour stocker la reponse uniquement afin de la retourner
+        String[] aStringReponseTemp = new String[tailleCombinaison];
+        for (int i = 0; i <= tailleCombinaison - 1; i++) {
+            aStringReponseTemp[i] = aStringDonneeIA[i][2];
+        }
+        // prend chaque valeurs du tableau et les retranscript  en un string
+        String reponse = String.join("", (aStringReponseTemp));
+        return reponse;
+    }
+
+    public String newPropositionIA() {
+        String[] aStringNewPropositionIA = new String[tailleCombinaison];
+        for (int i = 0; i <= tailleCombinaison - 1; i++) {
+            int newPropositionDigit;
+            int oldProposition = Integer.parseInt(aStringDonneeIA[i][1]);
+
+            switch (aStringDonneeIA[i][2]) {
                 case "-":
-                    oldPurposal--;
-                    int newPurposal=oldPurposal;
-                    tableauIntStockageProposition[i] = (newPurposal);
-                    tableauStringStockageSecretPropositionReponse[i][1]=String.valueOf(tableauIntStockageProposition[i]);
+                    // enleve 1 de la precedente proposition
+                    oldProposition--;
+                    newPropositionDigit = oldProposition;
+                    aStringNewPropositionIA[i] = String.valueOf(newPropositionDigit);
                     break;
                 case "+":
-                    oldPurposal++;
-                    newPurposal=oldPurposal;
-                    tableauIntStockageProposition[i] = (newPurposal);
-                    tableauStringStockageSecretPropositionReponse[i][1]=String.valueOf(tableauIntStockageProposition[i]);
+                    // ajoute 1 de la precedente proposition
+                    oldProposition++;
+                    newPropositionDigit = oldProposition;
+                    aStringNewPropositionIA[i] = String.valueOf(newPropositionDigit);
                     break;
                 case "=":
-                    tableauIntStockageProposition[i] = oldPurposal;
-                    tableauStringStockageSecretPropositionReponse[i][1]=String.valueOf(tableauIntStockageProposition[i]);
+                    //proposition reste inchangée
+                    newPropositionDigit = oldProposition;
+                    aStringNewPropositionIA[i] = String.valueOf(newPropositionDigit);
                     break;
             }
         }
-        for (int i = 0; i < tailleCombinaisonSecrete; i++) {
-            tableauStringStockageProposition[i] = tableauStringStockageSecretPropositionReponse[i][1];
-        }
-        String newPurpose = String.join("", tableauStringStockageProposition);
+        String newPurpose = String.join("", aStringNewPropositionIA);
         return newPurpose;
     }
 }
+
 
 
 
