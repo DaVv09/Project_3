@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>
+    <combinaison>
+        <taille>8</taille>
+    </combinaison>
+    <devellopeur>
+        true
+    </devellopeur>
+    <tentative>
+        <max>
+            8
+        </max>
+    </tentative>
+</config>

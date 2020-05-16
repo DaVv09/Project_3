@@ -46,6 +46,11 @@ public abstract class ModeDeJeu {
         return random;
     }
 
+    public int tour(){
+        int tour=(int)Math.round(Math.random());
+        return tour;
+    }
+
     public void storePropositionJoueur(String proposition) {
         //creer un tableau temp pour stocker la combinaison afin de la mettre dans le tableau joueur
         String[] aStringPropositionTemp = new String[tailleCombinaison];
@@ -67,7 +72,6 @@ public abstract class ModeDeJeu {
 
     public String compareJoueurXIA() {
         for (int i = 0; i <= tailleCombinaison - 1; i++) {
-            // cast String en Int pour effectuer la comparaison
             if (Integer.parseInt(aStringDonneeJoueur[i][1]) < Integer.parseInt(aStringDonneeIA[i][0])) {
                 aStringDonneeJoueur[i][2] = "+";
             } else if (Integer.parseInt(aStringDonneeJoueur[i][1]) > Integer.parseInt(aStringDonneeIA[i][0])) {
