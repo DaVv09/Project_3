@@ -174,16 +174,16 @@ public class App {
                     int tour = duel.tour();
 
                     boolean firstime = true; // verifie si l'on a dejà executé une fois le script
-                    // ############################################################################################
-                    // TODO debut de boucle
-                    boolean valide=false;
+                    boolean valide = false;
                     do {
                         if (tour == 0) { // joueur commence
-                            System.out.println("c'est au joueur de commencer a jouer");
-                            // ############################################################################################
+                            // System.out.println("c'est au joueur de commencer a jouer");
+                            // ################################### TOUR DU JOUEUR ###########################################
                             // TODO tour du joueur
-                            System.out.println("L'ordinateur a creer une combinaison secrete de (" + duel.tailleCombinaison + ") chiffres.");
-                            System.out.println("Veuillez proposer une combinaison de (" + duel.tailleCombinaison + ") chiffres.");
+                            if (firstime) {
+                                System.out.println("L'ordinateur a creer une combinaison secrete de (" + duel.tailleCombinaison + ") chiffres.");
+                            }
+                            System.out.println("Veuillez proposer une combinaison de (" + duel.tailleCombinaison + ") chiffres. correspondant au secret de l'ordinateur");
                             // proposition du joueur/
                             String propositionJoueur = sc.nextLine();
                             // si la proposition comporte +/- de digits demander, redemmander une nouvelle proposition
@@ -192,22 +192,22 @@ public class App {
                             } else {
                                 duel.storePropositionJoueur(propositionJoueur);
                                 String reponseJoueur = duel.compareJoueurXIA();
-                                System.out.println("Proposition : " + propositionJoueur + "  -> Réponse : " + reponseJoueur + "");
+                                System.out.println("");
+                                System.out.println("(JOUEUR) Proposition : " + propositionJoueur + "  -> Réponse : " + reponseJoueur + "");
                                 String combinaisonSecrete = String.valueOf(duel.combinaisonSecreteIA);
                                 if (propositionJoueur.equals(combinaisonSecrete)) {
                                     System.out.println("Bravo! vous avez trouver la combinaison secrete.");
-                                    valide=true;
+                                    valide = true;
                                 }
                             }
                             tour = 1; // prochain tour sera pour l'ordinateur
                         } else if (tour == 1) { // ordi commence
-                            System.out.println("c'est a l'ordinateur de commencer a jouer");
-                            // ############################################################################################
-                            // TODO tour DE  L'IA
-                            // genere un nombre aleatoire de xxxx digit en fonction de la taille de la combinaison
+                            // System.out.println("c'est a l'ordinateur de commencer a jouer");
+                            // ################################# TOUR DE L IA ######################################################
                             int propositionIA = 0;
                             String sPropositionIA = null;
                             if (firstime) {
+                                // genere un nombre aleatoire de xxxx digit en fonction de la taille de la combinaison
                                 propositionIA = duel.generate();
                                 firstime = false;
                             } else {
@@ -218,41 +218,40 @@ public class App {
                             duel.storePropositionIA(String.valueOf(propositionIA));
                             // retourne la comparaison des deux tableaux ( joueur (secret) / IA(Proposition) )
                             String reponse = duel.compareIAXJoueur();
-                            System.out.println("votre combinaision secrete :" + combiSecreteJoueur + " la suggestion de l'ordi : " + propositionIA + " (" + reponse + ")");
+                            System.out.println("");
+                            System.out.println("(ORDINATEUR) Proposition IA : " + propositionIA + "  -> Réponse : " + reponse + " votre combinaison secrete: " + duel.combinaisonSecretejoueur);
                             if (String.valueOf(propositionIA).equals(combiSecreteJoueur)) {
                                 System.out.println("Dommage! vous avez perdu. l'ordinateur a trouver votre combinaison secrete avant vous.");
-                                valide=true;
+                                valide = true;
                             }
                             tour = 0;// prochain tour sera pour le joueur
                         }
-                    }while(!valide);
-
-                        // ############################################################################################
-                        boolean ok;
-                        do {
-                            System.out.println("voulez-vous (R)ejouer ? (C)hanger de mode ? (Q)uitter ?");
-                            String recommencer = sc.nextLine();
-                            if (recommencer.equalsIgnoreCase("R") | recommencer.equalsIgnoreCase("Rejouer")) {
-                                rejouer = true;
-                                changer = false;
-                                ok = true;
-                            } else if (recommencer.equalsIgnoreCase("C") | recommencer.equalsIgnoreCase("Changer")) {
-                                rejouer = false;
-                                changer = true;
-                                ok = true;
-                            } else if (recommencer.equalsIgnoreCase("Q") | recommencer.equalsIgnoreCase("Quitter")) {
-                                rejouer = false;
-                                changer = false;
-                                ok = true;
-                            } else {
-                                System.out.println("Désolé, je n'ai pas compris votre choix.");
-                                ok = false;
-                            }
-                        } while (!ok);
-                    }
+                    } while (!valide);
+                    boolean ok;
+                    do {
+                        System.out.println("voulez-vous (R)ejouer ? (C)hanger de mode ? (Q)uitter ?");
+                        String recommencer = sc.nextLine();
+                        if (recommencer.equalsIgnoreCase("R") | recommencer.equalsIgnoreCase("Rejouer")) {
+                            rejouer = true;
+                            changer = false;
+                            ok = true;
+                        } else if (recommencer.equalsIgnoreCase("C") | recommencer.equalsIgnoreCase("Changer")) {
+                            rejouer = false;
+                            changer = true;
+                            ok = true;
+                        } else if (recommencer.equalsIgnoreCase("Q") | recommencer.equalsIgnoreCase("Quitter")) {
+                            rejouer = false;
+                            changer = false;
+                            ok = true;
+                        } else {
+                            System.out.println("Désolé, je n'ai pas compris votre choix.");
+                            ok = false;
+                        }
+                    } while (!ok);
                 }
-                //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-                 else {
+            }
+            //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+            else {
                 System.out.println("Le mode de jeu selectionné n'existe pas. Veuillez réessayer !");
             }
         }
