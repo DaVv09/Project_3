@@ -108,7 +108,7 @@ public class App {
                     defenseur.compteurTentativeIA++;
                     System.out.println("votre combinaision secrete :" + combiSecreteJoueur + " la suggestion de l'ordi : " + initialPurposeIA + " (" + reponse + ")");
                     while (!valide) {
-                        String newPropositionIA = null;
+                        String newPropositionIA;
                         //genere une nouvelle proposition en fonction de la reponse +/-
                         newPropositionIA = defenseur.newPropositionIA();
                         // stock la proposition dans le tableau de données IA
@@ -155,7 +155,6 @@ public class App {
                 System.out.println("Vous avez selectionner le mode : " + DUEL + "");
                 boolean rejouer = true;
                 while (rejouer) {
-                    // TODO initialisation du mode duel
                     // création des combinaisons secrete respectives
                     // genere un nombre aleatoire et ne garde que X digit en fonction de la taille
                     int secretIA = duel.generate();
@@ -173,15 +172,20 @@ public class App {
                         }
                     } while (combiSecreteJoueur.length() != duel.tailleCombinaison);
                     int tour = duel.tour();
+
+                    boolean firstime = true; // verifie si l'on a dejà executé une fois le script
+                    // ############################################################################################
                     // TODO debut de boucle
-                    if (duel.modeDevellopeur) {
-                        System.out.println(tour);
-                    }
-                    if (tour == 0){ // joueur commence
-                        // TODO tour du joueur
-                        System.out.println("Vous devez definir une combinaison secrete comportant (" + duel.tailleCombinaison + ") chiffres, l'ordinateur devra retrouver celle ci.");
-                        // proposition du joueur/
-                             String  propositionJoueur = sc.nextLine();
+                    boolean valide=false;
+                    do {
+                        if (tour == 0) { // joueur commence
+                            System.out.println("c'est au joueur de commencer a jouer");
+                            // ############################################################################################
+                            // TODO tour du joueur
+                            System.out.println("L'ordinateur a creer une combinaison secrete de (" + duel.tailleCombinaison + ") chiffres.");
+                            System.out.println("Veuillez proposer une combinaison de (" + duel.tailleCombinaison + ") chiffres.");
+                            // proposition du joueur/
+                            String propositionJoueur = sc.nextLine();
                             // si la proposition comporte +/- de digits demander, redemmander une nouvelle proposition
                             if (propositionJoueur.length() != duel.tailleCombinaison) {
                                 System.out.println("votre proposition ne comporte pas le nombre de chiffre attendu (" + duel.tailleCombinaison + ")");
@@ -192,13 +196,38 @@ public class App {
                                 String combinaisonSecrete = String.valueOf(duel.combinaisonSecreteIA);
                                 if (propositionJoueur.equals(combinaisonSecrete)) {
                                     System.out.println("Bravo! vous avez trouver la combinaison secrete.");
+                                    valide=true;
                                 }
                             }
-                    }else if(tour==1){ // ordi commence
-                        // TODO tour DE  L'IA
+                            tour = 1; // prochain tour sera pour l'ordinateur
+                        } else if (tour == 1) { // ordi commence
+                            System.out.println("c'est a l'ordinateur de commencer a jouer");
+                            // ############################################################################################
+                            // TODO tour DE  L'IA
+                            // genere un nombre aleatoire de xxxx digit en fonction de la taille de la combinaison
+                            int propositionIA = 0;
+                            String sPropositionIA = null;
+                            if (firstime) {
+                                propositionIA = duel.generate();
+                                firstime = false;
+                            } else {
+                                sPropositionIA = duel.newPropositionIA();
+                                propositionIA = Integer.parseInt(sPropositionIA);
+                            }
+                            //Stock la proposition initiale de l'IA dans son tableau & cast en String
+                            duel.storePropositionIA(String.valueOf(propositionIA));
+                            // retourne la comparaison des deux tableaux ( joueur (secret) / IA(Proposition) )
+                            String reponse = duel.compareIAXJoueur();
+                            System.out.println("votre combinaision secrete :" + combiSecreteJoueur + " la suggestion de l'ordi : " + propositionIA + " (" + reponse + ")");
+                            if (String.valueOf(propositionIA).equals(combiSecreteJoueur)) {
+                                System.out.println("Dommage! vous avez perdu. l'ordinateur a trouver votre combinaison secrete avant vous.");
+                                valide=true;
+                            }
+                            tour = 0;// prochain tour sera pour le joueur
+                        }
+                    }while(!valide);
 
-
-
+                        // ############################################################################################
                         boolean ok;
                         do {
                             System.out.println("voulez-vous (R)ejouer ? (C)hanger de mode ? (Q)uitter ?");
@@ -223,7 +252,7 @@ public class App {
                     }
                 }
                 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-            } else {
+                 else {
                 System.out.println("Le mode de jeu selectionné n'existe pas. Veuillez réessayer !");
             }
         }
