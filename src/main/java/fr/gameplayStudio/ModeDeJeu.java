@@ -1,13 +1,18 @@
 package fr.gameplayStudio;
 
+import fr.gameplayStudio.config.XmlManager;
+
 import java.util.Random;
 
 public abstract class ModeDeJeu {
 
+
+    XmlManager xmlManager=new XmlManager();
+
     //declaration des variables
     public Mode mode;
-    public boolean modeDevellopeur = true; // devra pointer sur un XML de config
-    public int tailleCombinaison = 4; // default 4  & devra pointer sur un XML de config
+    public boolean devMode = Boolean.valueOf(xmlManager.getSettingsValue(0));
+    public int tailleCombinaison = Integer.valueOf(xmlManager.getSettingsValue(1));
 
     //----------------------------------------------------------
     //------------------- variable pour l'IA -------------------
@@ -15,7 +20,7 @@ public abstract class ModeDeJeu {
 
 
     public int combinaisonSecreteIA;
-    final public int tentativeIA = 8; // default 8 & devra pointer sur un XML de config
+    final public int tentativeIA=Integer.valueOf(xmlManager.getSettingsValue(2));
     public int compteurTentativeIA = 0; // initialise a 0
     // [0] combi secrete IA [1] proposition IA [2] difference joueur.secret & IA.proposition ( aStringDonneeJoueur[i][2] = aStringDonneeJoueur[i][1] compare aStringDonneeIA[i][0] )
     public String[][] aStringDonneeIA = new String[tailleCombinaison][3];
@@ -25,8 +30,7 @@ public abstract class ModeDeJeu {
     //----------------- variable pour le joueur ----------------
     //----------------------------------------------------------
     public int combinaisonSecretejoueur;
-    final public int tentativeJoueur = 8; // default 8 & devra pointer sur un XML de config
-    public int compteurTentativeIJoueur = 0; // initialise a 0
+    final public int tentativeJoueur = Integer.valueOf(xmlManager.getSettingsValue(2));
     public String[][] aStringDonneeJoueur = new String[tailleCombinaison][3];
 
     //constructeur
@@ -60,16 +64,24 @@ public abstract class ModeDeJeu {
         }
     }
 
+
+    /**
+     * creer un tableau temp pour stocker le secret afin de le mettre dans le tableau joueur
+     * @param secret
+     */
     public void storeSecretJoueur(String secret) {
         combinaisonSecretejoueur = Integer.parseInt(secret);
-        //creer un tableau temp pour stocker le secret afin de le mettre dans le tableau joueur
         String[] aStringSecretTemp = new String[tailleCombinaison];
-        aStringSecretTemp = String.valueOf(secret).split("");
+        aStringSecretTemp = secret.split("");
         for (int i = 0; i <= tailleCombinaison - 1; i++) {
             aStringDonneeJoueur[i][0] = aStringSecretTemp[i];
         }
     }
 
+    /**
+     *
+     * @return  +/- en fonction de la difference entre la proposition du joueur et le secret de l IA
+     */
     public String compareJoueurXIA() {
         for (int i = 0; i <= tailleCombinaison - 1; i++) {
             if (Integer.parseInt(aStringDonneeJoueur[i][1]) < Integer.parseInt(aStringDonneeIA[i][0])) {
@@ -90,7 +102,10 @@ public abstract class ModeDeJeu {
         return reponse;
     }
 
-
+    /**
+     * stock la combinaison secrete de l IA dans un tableau appartenant a l'IA pour manipulation future
+     * @param secret
+     */
     public void storeSecretIA(int secret) {
         combinaisonSecreteIA = secret;
         //creer un tableau temp pour stocker le secret afin de le mettre dans le tableau IA
@@ -102,10 +117,14 @@ public abstract class ModeDeJeu {
         }
     }
 
+    /**
+     * Stock la proposition de l'IA dans sont tableau afin de manipuler les données lors de la comparaison
+     * @param proposition
+     */
     public void storePropositionIA(String proposition) {
         //creer un tableau temp pour stocker la combinaison afin de la mettre dans le tableau IA
-        String[] aStringPropositionTemp = new String[tailleCombinaison];
-        aStringPropositionTemp = String.valueOf(proposition).split("");
+        //String[] aStringPropositionTemp = new String[tailleCombinaison];
+        String[] aStringPropositionTemp = String.valueOf(proposition).split("");
         for (int i = 0; i <= tailleCombinaison - 1; i++) {
             aStringDonneeIA[i][1] = aStringPropositionTemp[i];
         }
@@ -123,13 +142,13 @@ public abstract class ModeDeJeu {
             }
         }
         // Creer un tableau temporaire pour stocker la reponse uniquement afin de la retourner
-        String[] aStringReponseTemp = new String[tailleCombinaison];
+        String[] aStringresponseTemp = new String[tailleCombinaison];
         for (int i = 0; i <= tailleCombinaison - 1; i++) {
-            aStringReponseTemp[i] = aStringDonneeIA[i][2];
+            aStringresponseTemp[i] = aStringDonneeIA[i][2];
         }
         // prend chaque valeurs du tableau et les retranscript  en un string
-        String reponse = String.join("", (aStringReponseTemp));
-        return reponse;
+        String response = String.join("", (aStringresponseTemp));
+        return response;
     }
 
     public String newPropositionIA() {

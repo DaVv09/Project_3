@@ -1,5 +1,10 @@
 package fr.gameplayStudio;
 
+import fr.gameplayStudio.config.XmlManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import static fr.gameplayStudio.Mode.*;
@@ -7,36 +12,70 @@ import static fr.gameplayStudio.Mode.*;
 public class App {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
+        Logger logger = LogManager.getLogger(App.class);
+        String devResponse = null;
+        XmlManager xmlManager = new XmlManager();
+        boolean devAnswered = false;
+        do {
+            System.out.println("Activer le mode devellopeur ? (O)ui ou (N)on");
+            devResponse = sc.nextLine();
+            if (devResponse.equalsIgnoreCase("O") | devResponse.equalsIgnoreCase("oui")) {
+                xmlManager.setDevValue("true");
+                devAnswered = true;
+            } else if (devResponse.equalsIgnoreCase("N") | devResponse.equalsIgnoreCase("non")) {
+                xmlManager.setDevValue("false");
+                devAnswered = true;
+            }
+        } while (devAnswered = false);
+
         boolean changer = true;
         while (changer) {
             //selection du mode de jeu
             System.out.println("Veuillez selectionner un mode de jeu : (" + CHALLENGER.ordre + ") " + CHALLENGER + " | (" + DEFENSEUR.ordre + ") " + DEFENSEUR + " | (" + DUEL.ordre + ") " + DUEL + "");
-            int choixModeDeJeu = sc.nextInt();
+            int choixModeDeJeu = 0;
+            try {
+                choixModeDeJeu = sc.nextInt();
+            } catch (InputMismatchException ime) {
+                System.out.println("veuillez n'utiliser que des chiffres pour le choix des modes.");
+            }
             sc.nextLine();// consomme le saut de ligne après un nextint.
             // en fonction de la reponse fourni, execute le process pour le mode choisi.
             if (choixModeDeJeu == CHALLENGER.ordre) {
-                // mise a 0 des données IA et joueur
                 Challenger challenger = new Challenger(CHALLENGER);
-                System.out.println("Vous avez selectionner le mode : " + CHALLENGER + "");
+                challenger.play();
+                /*System.out.println("Vous avez selectionner le mode : " + CHALLENGER + "");
                 //rejouer tant que  rejouer = true
                 // on reste dans la boucle pour execute de nouveau le process du jeu
                 boolean rejouer = true;
                 while (rejouer) {
-                    // genere un nombre aleatoire et ne garde que X digit en fonction de la taille
+                    *//* genere un nombre aleatoire et ne garde que X digit en fonction de la taille combinaison
+                     * et s'assure que la combinaison généré comporte bien la bonne taille
+                     *//*
+
                     int secretIA = challenger.generate();
+                    String sSecretIA = String.valueOf(secretIA);
+                    if (sSecretIA.length() != challenger.tailleCombinaison) {
+                        do {
+                            secretIA = challenger.generate();
+                        } while (sSecretIA.length() != challenger.tailleCombinaison);
+                    }
                     challenger.storeSecretIA(secretIA); // stock dans le tableau IA la combinaison secrete
                     // joueur joue
                     System.out.println("Vous devez devinez la combinaison secrete, celle qui comporte " + challenger.tailleCombinaison + " chiffres. c'est à vous de jouer.");
                     // si le mode devellopeur est activé, ecrire dans la console la combinaison secrete generée
-                    if (challenger.modeDevellopeur) {
-                        System.out.println("Devellopeur mode :  combi secrete = " + challenger.combinaisonSecreteIA);
+                    if (challenger.devMode) {
+                        System.out.println("Devellopeur mode Activé :  combi secrete = " + challenger.combinaisonSecreteIA);
                     }
                     //creer une variable boolean afin de creer une boucle et de re demander de tester une nouvelle propositions jusqu'a ce qu'elle soit valide.
-                    String proposition;
+                    String proposition = null;
                     boolean valide = false;
                     while (!valide) {
                         // proposition du joueur
-                        proposition = sc.nextLine();
+                        try {
+                            proposition = sc.nextLine();
+                        } catch (NumberFormatException nfe) {
+                            System.out.println("vous ne pouvez n'utiliser que des chiffres (0-9)");
+                        }
                         // si la proposition comporte +/- de digits demander, redemmander une nouvelle proposition
                         if (proposition.length() != challenger.tailleCombinaison) {
                             System.out.println("votre proposition ne comporte pas le nombre de chiffre attendu (" + challenger.tailleCombinaison + ")");
@@ -54,7 +93,14 @@ public class App {
                     boolean ok;
                     do {
                         System.out.println("voulez-vous (R)ejouer ? (C)hanger de mode ? (Q)uitter ?");
-                        String recommencer = sc.nextLine();
+                        String recommencer = null;
+
+                        try {
+                            recommencer = sc.nextLine();
+                        } catch (NumberFormatException nfe) {
+                            System.out.println("les chiffres ne sont pas autorisés dans cette reponse");
+                        }
+
                         if (recommencer.equalsIgnoreCase("R") | recommencer.equalsIgnoreCase("Rejouer")) {
                             rejouer = true;
                             changer = false;
@@ -74,7 +120,7 @@ public class App {
                     }
                     while (!ok);
 
-                }
+                }*/
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             } else if (choixModeDeJeu == DEFENSEUR.ordre) {
@@ -98,8 +144,18 @@ public class App {
                     } while (combiSecreteJoueur.length() != defenseur.tailleCombinaison);
                     defenseur.storeSecretJoueur(combiSecreteJoueur);
                     boolean valide = false;
-                    // genere un nombre aleatoire de xxxx digit en fonction de la taille de la combinaison
+
+                    /* genere un nombre aleatoire et ne garde que X digit en fonction de la taille combinaison
+                     * et s'assure que la combinaison généré comporte bien la bonne taille
+                     */
                     int initialPurposeIA = defenseur.generate();
+                    String sInitialPurposeIA = String.valueOf(initialPurposeIA);
+                    if (sInitialPurposeIA.length() != defenseur.tailleCombinaison) {
+                        do {
+                            initialPurposeIA = defenseur.generate();
+                        } while (sInitialPurposeIA.length() != defenseur.tailleCombinaison);
+                    }
+
                     //Stock la proposition initiale de l'IA dans son tableau & cast en String
                     defenseur.storePropositionIA(String.valueOf(initialPurposeIA));
                     // retourne la comparaison des deux tableaux ( joueur (secret) / IA(Proposition) )
@@ -156,10 +212,19 @@ public class App {
                 boolean rejouer = true;
                 while (rejouer) {
                     // création des combinaisons secrete respectives
-                    // genere un nombre aleatoire et ne garde que X digit en fonction de la taille
+
+                    /* genere un nombre aleatoire et ne garde que X digit en fonction de la taille combinaison
+                     * et s'assure que la combinaison généré comporte bien la bonne taille
+                     */
                     int secretIA = duel.generate();
+                    String sSecretIA = String.valueOf(secretIA);
+                    if (sSecretIA.length() != duel.tailleCombinaison) {
+                        do {
+                            secretIA = duel.generate();
+                        } while (sSecretIA.length() != duel.tailleCombinaison);
+                    }
+
                     duel.storeSecretIA(secretIA); // stock dans le tableau IA la combinaison secrete
-                    //
                     String combiSecreteJoueur;
                     do {
                         System.out.println("Vous devez definir une combinaison secrete comportant (" + duel.tailleCombinaison + ") chiffres, l'ordinateur devra retrouver celle ci.");
@@ -177,11 +242,14 @@ public class App {
                     boolean valide = false;
                     do {
                         if (tour == 0) { // joueur commence
-                            // System.out.println("c'est au joueur de commencer a jouer");
-                            // ################################### TOUR DU JOUEUR ###########################################
-                            // TODO tour du joueur
+                            /**
+                             * Tour du joueur
+                             **/
                             if (firstime) {
                                 System.out.println("L'ordinateur a creer une combinaison secrete de (" + duel.tailleCombinaison + ") chiffres.");
+                                if (duel.devMode) {
+                                    System.out.println(" combinaison de l'IA : " + duel.combinaisonSecreteIA);
+                                }
                             }
                             System.out.println("Veuillez proposer une combinaison de (" + duel.tailleCombinaison + ") chiffres. correspondant au secret de l'ordinateur");
                             // proposition du joueur/
@@ -192,7 +260,7 @@ public class App {
                             } else {
                                 duel.storePropositionJoueur(propositionJoueur);
                                 String reponseJoueur = duel.compareJoueurXIA();
-                                System.out.println("");
+                                System.out.println();
                                 System.out.println("(JOUEUR) Proposition : " + propositionJoueur + "  -> Réponse : " + reponseJoueur + "");
                                 String combinaisonSecrete = String.valueOf(duel.combinaisonSecreteIA);
                                 if (propositionJoueur.equals(combinaisonSecrete)) {
@@ -202,8 +270,9 @@ public class App {
                             }
                             tour = 1; // prochain tour sera pour l'ordinateur
                         } else if (tour == 1) { // ordi commence
-                            // System.out.println("c'est a l'ordinateur de commencer a jouer");
-                            // ################################# TOUR DE L IA ######################################################
+                            /*
+                             * tour de l'ia
+                             */
                             int propositionIA = 0;
                             String sPropositionIA = null;
                             if (firstime) {
@@ -218,7 +287,7 @@ public class App {
                             duel.storePropositionIA(String.valueOf(propositionIA));
                             // retourne la comparaison des deux tableaux ( joueur (secret) / IA(Proposition) )
                             String reponse = duel.compareIAXJoueur();
-                            System.out.println("");
+                            System.out.println();
                             System.out.println("(ORDINATEUR) Proposition IA : " + propositionIA + "  -> Réponse : " + reponse + " votre combinaison secrete: " + duel.combinaisonSecretejoueur);
                             if (String.valueOf(propositionIA).equals(combiSecreteJoueur)) {
                                 System.out.println("Dommage! vous avez perdu. l'ordinateur a trouver votre combinaison secrete avant vous.");
@@ -257,3 +326,4 @@ public class App {
         }
     }
 }
+

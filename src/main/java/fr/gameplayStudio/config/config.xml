@@ -1,15 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version = "1.0" encoding = "UTF-8" standalone = "no"?>
+<game>
+    <config>
+        <dev type="activated">true</dev>
+        <secret type="size">4</secret>
+        <attempt type="max">10</attempt>
+    </config>
+</game>
 
-<config>
-    <combinaison>
-        <taille>8</taille>
-    </combinaison>
-    <devellopeur>
-        true
-    </devellopeur>
-    <tentative>
-        <max>
-            8
-        </max>
-    </tentative>
-</config>
+
