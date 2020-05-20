@@ -13,18 +13,20 @@ public class Challenger extends ModeDeJeu {
     public void play() {
         Scanner sc = new Scanner(System.in);
         System.out.println("Vous avez selectionner le mode : " + CHALLENGER + "");
-        int secretIA = this.generate();
+        //genere un nombre aleatoire et ne garde que X digit en fonction de la taille combinaison
+        //et s 'assure que la combinaison généré comporte bien la bonne taille
+        int secretIA = generate();
         String sSecretIA = String.valueOf(secretIA);
-        if (sSecretIA.length() != this.tailleCombinaison) {
+        if (sSecretIA.length() != tailleCombinaison) {
             do {
-                secretIA = this.generate();
-            } while (sSecretIA.length() != this.tailleCombinaison);
+                secretIA = generate();
+            } while (sSecretIA.length() != tailleCombinaison);
         }
-        this.storeSecretIA(secretIA); // stock dans le tableau IA la combinaison secrete
-        System.out.println("Vous devez devinez la combinaison secrete, celle qui comporte " + this.tailleCombinaison + " chiffres. c'est à vous de jouer.");
+        storeSecretIA(secretIA); // stock dans le tableau IA la combinaison secrete
+        System.out.println("Vous devez devinez la combinaison secrete, celle qui comporte " + tailleCombinaison + " chiffres. c'est à vous de jouer.");
         // si le mode devellopeur est activé, ecrire dans la console la combinaison secrete generée
-        if (this.devMode) {
-            System.out.println("Devellopeur mode Activé :  combi secrete = " + this.combinaisonSecreteIA);
+        if (devMode) {
+            System.out.println("Devellopeur mode Activé :  combi secrete = " + combinaisonSecreteIA);
         }
         //creer une variable boolean afin de creer une boucle et de re demander de tester une nouvelle propositions jusqu'a ce qu'elle soit valide.
         String proposition = null;
@@ -37,13 +39,13 @@ public class Challenger extends ModeDeJeu {
                 System.out.println("vous ne pouvez n'utiliser que des chiffres (0-9)");
             }
             // si la proposition comporte +/- de digits demander, redemmander une nouvelle proposition
-            if (proposition.length() != this.tailleCombinaison) {
-                System.out.println("votre proposition ne comporte pas le nombre de chiffre attendu (" + this.tailleCombinaison + ")");
+            if (proposition.length() != tailleCombinaison) {
+                System.out.println("votre proposition ne comporte pas le nombre de chiffre attendu (" + tailleCombinaison + ")");
             } else {
-                this.storePropositionJoueur(proposition);
-                String reponseJoueur = this.compareJoueurXIA();
+                storePropositionJoueur(proposition);
+                String reponseJoueur = compareJoueurXIA();
                 System.out.println("Proposition : " + proposition + "  -> Réponse : " + reponseJoueur + "");
-                String combinaisonSecrete = String.valueOf(this.combinaisonSecreteIA);
+                String combinaisonSecrete = String.valueOf(combinaisonSecreteIA);
                 if (proposition.equals(combinaisonSecrete)) {
                     System.out.println("Bravo! vous avez trouver la combinaison secrete.");
                     valide = true;
@@ -51,40 +53,5 @@ public class Challenger extends ModeDeJeu {
             }
         }
     }
-
-
-    @Override
-    public int generate() {
-        return super.generate();
-    }
-
-    @Override
-    public void storePropositionJoueur(String proposition) {
-        super.storePropositionJoueur(proposition);
-    }
-
-    @Override
-    public void storeSecretJoueur(String secret) {
-        super.storeSecretJoueur(secret);
-    }
-
-    @Override
-    public String compareJoueurXIA() {
-        return super.compareJoueurXIA();
-    }
-
-    @Override
-    public void storeSecretIA(int secret) {
-        super.storeSecretIA(secret);
-    }
-
-    @Override
-    public void storePropositionIA(String proposition) {
-        super.storePropositionIA(proposition);
-    }
-
-    @Override
-    public String compareIAXJoueur() {
-        return super.compareIAXJoueur();
-    }
 }
+

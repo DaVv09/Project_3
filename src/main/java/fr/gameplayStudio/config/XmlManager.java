@@ -77,12 +77,12 @@ public class XmlManager {
                 }
             }
             // write the content on console
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+           /* TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(doc);
             System.out.println("-----------Modified File-----------");
             StreamResult consoleResult = new StreamResult(System.out);
-            transformer.transform(source, consoleResult);
+            transformer.transform(source, consoleResult);*/
         } catch (Exception e) {
             e.printStackTrace();
         }

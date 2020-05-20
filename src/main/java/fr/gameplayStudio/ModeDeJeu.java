@@ -3,6 +3,7 @@ package fr.gameplayStudio;
 import fr.gameplayStudio.config.XmlManager;
 
 import java.util.Random;
+import java.util.Scanner;
 
 public abstract class ModeDeJeu {
 
@@ -10,9 +11,10 @@ public abstract class ModeDeJeu {
     XmlManager xmlManager=new XmlManager();
 
     //declaration des variables
+    boolean rejouer=false;
     public Mode mode;
-    public boolean devMode = Boolean.valueOf(xmlManager.getSettingsValue(0));
     public int tailleCombinaison = Integer.valueOf(xmlManager.getSettingsValue(1));
+    public boolean devMode = Boolean.valueOf(xmlManager.getSettingsValue(0));
 
     //----------------------------------------------------------
     //------------------- variable pour l'IA -------------------
@@ -38,7 +40,10 @@ public abstract class ModeDeJeu {
         this.mode = mode;
     }
 
-    //methodes
+    /**
+     *
+     * @return retourne un int aleatoire ayant pour taille celle definit dans le fichier de config( default 4)
+     */
     public int generate() {
         Random randomNb = new Random();
         int random = randomNb.nextInt();
@@ -50,11 +55,19 @@ public abstract class ModeDeJeu {
         return random;
     }
 
+    /**
+     * utiliser dans le mode duel afin de choisir la personne commencant a jouer.
+     * @return tour correspondand soit a 0 ou 1
+     */
     public int tour(){
         int tour=(int)Math.round(Math.random());
         return tour;
     }
 
+    /**
+     * stock la proposition du joueur issu du scanner dans son tableau pour comparaison future
+     * @param proposition
+     */
     public void storePropositionJoueur(String proposition) {
         //creer un tableau temp pour stocker la combinaison afin de la mettre dans le tableau joueur
         String[] aStringPropositionTemp = new String[tailleCombinaison];
@@ -130,6 +143,10 @@ public abstract class ModeDeJeu {
         }
     }
 
+    /**
+     * compare la proposition de l'IA avec la combinaison secrete du joueur
+     * @return +/- en fonction des differences etablies
+     */
     public String compareIAXJoueur() {
         for (int i = 0; i <= tailleCombinaison - 1; i++) {
             // cast String en Int pour effectuer la comparaison
@@ -151,6 +168,10 @@ public abstract class ModeDeJeu {
         return response;
     }
 
+    /**
+     *
+     * @return une nouvelle proposition en fonction de la comparaison donné precedement
+     */
     public String newPropositionIA() {
         String[] aStringNewPropositionIA = new String[tailleCombinaison];
         for (int i = 0; i <= tailleCombinaison - 1; i++) {
@@ -180,7 +201,30 @@ public abstract class ModeDeJeu {
         String newPurpose = String.join("", aStringNewPropositionIA);
         return newPurpose;
     }
+
+    public void menu(){
+        Scanner sc=new Scanner(System.in);
+        boolean ok=false;
+        do {
+            System.out.println("voulez-vous (R)ejouer ? (C)hanger de mode ? (Q)uitter ?");
+            String recommencer = sc.nextLine();
+            if (recommencer.equalsIgnoreCase("R") | recommencer.equalsIgnoreCase("Rejouer")) {
+                rejouer=true;
+                ok = true;
+            } else if (recommencer.equalsIgnoreCase("C") | recommencer.equalsIgnoreCase("Changer")) {
+                ok = true;
+                break;
+            } else if (recommencer.equalsIgnoreCase("Q") | recommencer.equalsIgnoreCase("Quitter")) {
+                System.exit(0);
+            } else {
+                System.out.println("Désolé, je n'ai pas compris votre choix.");
+                ok = false;
+            }
+        } while (!ok);
+    }
 }
+
+
 
 
 
