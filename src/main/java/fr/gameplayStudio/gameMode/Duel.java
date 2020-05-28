@@ -1,18 +1,18 @@
-package fr.gameplayStudio;
+package fr.gameplayStudio.gameMode;
 
 
 import java.util.Scanner;
 
-import static fr.gameplayStudio.Mode.DUEL;
+import static fr.gameplayStudio.gameMode.ModeEnum.DUEL;
 
 public class Duel extends ModeDeJeu {
 
-    public Duel(Mode mode) {
-        super(mode);
+    public Duel(ModeEnum modeEnum) {
+        super(modeEnum);
     }
 
-    public void play(){
-        boolean devMode = Boolean.valueOf(xmlManager.getSettingsValue(0));
+    public void play(boolean devValue){
+        devMode=devValue;
         Scanner  sc= new Scanner(System.in);
         System.out.println("Vous avez selectionner le mode : " + DUEL + "");
             int secretIA = generate();
@@ -59,8 +59,7 @@ public class Duel extends ModeDeJeu {
                     } else {
                         storePropositionJoueur(propositionJoueur);
                         String reponseJoueur = compareJoueurXIA();
-                        System.out.println();
-                        System.out.println("(JOUEUR) Proposition : " + propositionJoueur + "  -> Réponse : " + reponseJoueur + "");
+                        System.out.println("\n(JOUEUR) Proposition : " + propositionJoueur + "  -> Réponse : " + reponseJoueur + "");
                         String combinaisonSecrete = String.valueOf(combinaisonSecreteIA);
                         if (propositionJoueur.equals(combinaisonSecrete)) {
                             System.out.println("Bravo! vous avez trouver la combinaison secrete.");
@@ -86,8 +85,8 @@ public class Duel extends ModeDeJeu {
                     storePropositionIA(String.valueOf(propositionIA));
                     // retourne la comparaison des deux tableaux ( joueur (secret) / IA(Proposition) )
                     String reponse = compareIAXJoueur();
-                    System.out.println();
-                    System.out.println("(ORDINATEUR) Proposition IA : " + propositionIA + "  -> Réponse : " + reponse + " votre combinaison secrete: " + combinaisonSecretejoueur);
+
+                    System.out.println("\n(ORDINATEUR) Proposition IA : " + propositionIA + "  -> Réponse : " + reponse + " votre combinaison secrete: " + combinaisonSecretejoueur);
                     if (String.valueOf(propositionIA).equals(combiSecreteJoueur)) {
                         System.out.println("Dommage! vous avez perdu. l'ordinateur a trouver votre combinaison secrete avant vous.");
                         valide = true;
@@ -95,6 +94,7 @@ public class Duel extends ModeDeJeu {
                     tour = 0;// prochain tour sera pour le joueur
                 }
             } while (!valide);
+        menu(DUEL.ordre,devMode);
         }
 }
 

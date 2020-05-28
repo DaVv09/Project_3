@@ -1,33 +1,41 @@
 package fr.gameplayStudio;
 
+import fr.gameplayStudio.config.XmlConstants;
 import fr.gameplayStudio.config.XmlManager;
+import fr.gameplayStudio.gameMode.Challenger;
+import fr.gameplayStudio.gameMode.Defenseur;
+import fr.gameplayStudio.gameMode.Duel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import static fr.gameplayStudio.Mode.*;
+import static fr.gameplayStudio.gameMode.ModeEnum.*;
 
 public class App {
     public static void main(String[] args) {
+
         Scanner sc = new Scanner(System.in);
-        Logger logger = LogManager.getLogger(App.class);
         String devResponse = null;
         XmlManager xmlManager = new XmlManager();
+        XmlConstants xmlConstants = new XmlConstants();
+
         boolean devAnswered = false;
+
         do {
             System.out.println("Activer le mode devellopeur ? (O)ui ou (N)on");
             devResponse = sc.nextLine();
             if (devResponse.equalsIgnoreCase("O") | devResponse.equalsIgnoreCase("oui")) {
                 xmlManager.setDevValue("true");
+                xmlConstants.setDevMode(true);
                 devAnswered = true;
             } else if (devResponse.equalsIgnoreCase("N") | devResponse.equalsIgnoreCase("non")) {
                 xmlManager.setDevValue("false");
+                xmlConstants.setDevMode(false);
                 devAnswered = true;
             }
         } while (devAnswered = false);
-
 
         boolean changer = true;
         while (changer) {
@@ -43,85 +51,18 @@ public class App {
 
 
             if (choixModeDeJeu == CHALLENGER.ordre) {
-                boolean rejouer=false;
-                do {
                     Challenger challenger = new Challenger(CHALLENGER);
-                    challenger.play();
-                    boolean ok;
-                    do {
-                        System.out.println("voulez-vous (R)ejouer ? (C)hanger de mode ? (Q)uitter ?");
-                        String recommencer = sc.nextLine();
-                        if (recommencer.equalsIgnoreCase("R") | recommencer.equalsIgnoreCase("Rejouer")) {
-                            rejouer = true;
-                            changer = false;
-                            ok = true;
-                        } else if (recommencer.equalsIgnoreCase("C") | recommencer.equalsIgnoreCase("Changer")) {
-                            rejouer = false;
-                            changer = true;
-                            ok = true;
-                        } else if (recommencer.equalsIgnoreCase("Q") | recommencer.equalsIgnoreCase("Quitter")) {
-                            System.exit(-1);
-                            ok = true;
-                        } else {
-                            System.out.println("Désolé, je n'ai pas compris votre choix.");
-                            ok = false;
-                        }
-                    } while (!ok);
-                }while(rejouer);
+                    challenger.play(xmlConstants.isDevMode());
+
             } else if (choixModeDeJeu == DEFENSEUR.ordre) {
 
-                boolean rejouer=false;
-                do{
-                Defenseur defenseur = new Defenseur(DEFENSEUR);
-                defenseur.play();
-                boolean ok;
-                do {
-                    System.out.println("voulez-vous (R)ejouer ? (C)hanger de mode ? (Q)uitter ?");
-                    String recommencer = sc.nextLine();
-                    if (recommencer.equalsIgnoreCase("R") | recommencer.equalsIgnoreCase("Rejouer")) {
-                        rejouer = true;
-                        changer = false;
-                        ok = true;
-                    } else if (recommencer.equalsIgnoreCase("C") | recommencer.equalsIgnoreCase("Changer")) {
-                        rejouer = false;
-                        changer = true;
-                        ok = true;
-                    } else if (recommencer.equalsIgnoreCase("Q") | recommencer.equalsIgnoreCase("Quitter")) {
-                        System.exit(-1);
-                        ok = true;
-                    } else {
-                        System.out.println("Désolé, je n'ai pas compris votre choix.");
-                        ok = false;
-                    }
-                } while (!ok);
-            }while(rejouer);
+                    Defenseur defenseur = new Defenseur(DEFENSEUR);
+                    defenseur.play(xmlConstants.isDevMode());
+
             } else if (choixModeDeJeu == DUEL.ordre) {
-                boolean rejouer=false;
-                do{
-                Duel duel = new Duel(DUEL);
-                duel.play();
-                boolean ok;
-                do {
-                    System.out.println("voulez-vous (R)ejouer ? (C)hanger de mode ? (Q)uitter ?");
-                    String recommencer = sc.nextLine();
-                    if (recommencer.equalsIgnoreCase("R") | recommencer.equalsIgnoreCase("Rejouer")) {
-                        rejouer = true;
-                        changer = false;
-                        ok = true;
-                    } else if (recommencer.equalsIgnoreCase("C") | recommencer.equalsIgnoreCase("Changer")) {
-                        rejouer = false;
-                        changer = true;
-                        ok = true;
-                    } else if (recommencer.equalsIgnoreCase("Q") | recommencer.equalsIgnoreCase("Quitter")) {
-                        System.exit(-1);
-                        ok = true;
-                    } else {
-                        System.out.println("Désolé, je n'ai pas compris votre choix.");
-                        ok = false;
-                    }
-                } while (!ok);
-                }while(rejouer);
-            }else {
+                    Duel duel = new Duel(DUEL);
+                    duel.play(xmlConstants.isDevMode());
+            } else {
                 System.out.println("Le mode de jeu selectionné n'existe pas. Veuillez réessayer !");
             }
         }

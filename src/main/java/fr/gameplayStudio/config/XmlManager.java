@@ -6,10 +6,6 @@ import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -20,8 +16,9 @@ import org.xml.sax.SAXException;
 
 public class XmlManager {
 
-    public String getSettingsValue(int value){
-        String [] settings =new String[3];
+    XmlConstants xmlConstants=new XmlConstants();
+
+    public void getSettingsValue(){
         final String xmlConfigPath = "F:/Mes Documents/OpenClassroom/project/Escape Game ONLINE/src/main/java/fr/gameplayStudio/config/config.xml";
         try {
             final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -41,10 +38,9 @@ public class XmlManager {
                     final Element secret = (Element) config.getElementsByTagName("secret").item(0);
                     final Element attempt = (Element) config.getElementsByTagName("attempt").item(0);
 
-                    settings[0]=dev.getTextContent();
-                    settings[1]=secret.getTextContent();
-                    settings[2]=attempt.getTextContent();
-
+                    xmlConstants.setDevMode(Boolean.valueOf(dev.getTextContent()));
+                    xmlConstants.setTailleCombinaison(Integer.valueOf(secret.getTextContent()));
+                    xmlConstants.setTentative(Integer.valueOf(attempt.getTextContent()));
                 }
             }
         } catch (final ParserConfigurationException e) {
@@ -54,9 +50,9 @@ public class XmlManager {
         } catch (final IOException e) {
             e.printStackTrace();
         }
-        return settings[value];
     }
     public void setDevValue(String value){
+
         final String xmlConfigPath = "F:/Mes Documents/OpenClassroom/project/Escape Game ONLINE/src/main/java/fr/gameplayStudio/config/config.xml";
         try {
             final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -74,15 +70,9 @@ public class XmlManager {
                     final Element config = (Element) rootNodes.item(i);
                     final Element dev = (Element)  config.getElementsByTagName("dev").item(0);
                     dev.setTextContent(value);
+                    xmlConstants.setDevMode(Boolean.valueOf(value));
                 }
             }
-            // write the content on console
-           /* TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            DOMSource source = new DOMSource(doc);
-            System.out.println("-----------Modified File-----------");
-            StreamResult consoleResult = new StreamResult(System.out);
-            transformer.transform(source, consoleResult);*/
         } catch (Exception e) {
             e.printStackTrace();
         }

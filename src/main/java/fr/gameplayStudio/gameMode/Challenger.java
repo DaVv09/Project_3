@@ -1,16 +1,17 @@
-package fr.gameplayStudio;
+package fr.gameplayStudio.gameMode;
 
 import java.util.Scanner;
 
-import static fr.gameplayStudio.Mode.CHALLENGER;
+import static fr.gameplayStudio.gameMode.ModeEnum.CHALLENGER;
 
 public class Challenger extends ModeDeJeu {
 
-    public Challenger(Mode mode) {
-        super(mode);
+    public Challenger(ModeEnum modeEnum) {
+        super(modeEnum);
     }
 
-    public void play() {
+    public void play(boolean devValue) {
+        devMode=devValue;
         Scanner sc = new Scanner(System.in);
         System.out.println("Vous avez selectionner le mode : " + CHALLENGER + "");
         //genere un nombre aleatoire et ne garde que X digit en fonction de la taille combinaison
@@ -52,6 +53,7 @@ public class Challenger extends ModeDeJeu {
                 }
             }
         }
+        menu(CHALLENGER.ordre,devMode);
     }
 }
 

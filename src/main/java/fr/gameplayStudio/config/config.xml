@@ -3,7 +3,7 @@
     <config>
         <dev type="activated">true</dev>
         <secret type="size">4</secret>
-        <attempt type="max">10</attempt>
+        <attempt type="max">8</attempt>
     </config>
 </game>
 

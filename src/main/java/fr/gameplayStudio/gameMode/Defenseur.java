@@ -1,16 +1,16 @@
-package fr.gameplayStudio;
+package fr.gameplayStudio.gameMode;
 
 import java.util.Scanner;
 
-import static fr.gameplayStudio.Mode.DEFENSEUR;
+import static fr.gameplayStudio.gameMode.ModeEnum.DEFENSEUR;
 
 public class Defenseur extends ModeDeJeu {
-    public Defenseur(Mode mode) {
-        super(mode);
+    public Defenseur(ModeEnum modeEnum) {
+        super(modeEnum);
     }
 
-    public void play() {
-        boolean devMode = Boolean.valueOf(xmlManager.getSettingsValue(0));
+    public void play(boolean devValue) {
+        devMode=devValue;
         Scanner sc = new Scanner(System.in);
         System.out.println("Vous avez selectionner le mode : " + DEFENSEUR + "");
         //re-init nombre d'essai
@@ -59,10 +59,11 @@ public class Defenseur extends ModeDeJeu {
             if (combiSecreteJoueur.equals(newPropositionIA)) {
                 System.out.println("Dommage! vous avez perdu : l'IA a été capable de trouver votre combinaison secrete en " + compteurTentativeIA + " tentative(s)");
                 valide = true;
-            } else if (compteurTentativeIA >= tentativeIA) {
-                System.out.println("Bravo! vous avez gagné : l'IA n'a pas été capable de trouver votre combinaison en moins de " + tentativeIA + " tentatives");
+            } else if (compteurTentativeIA >= tentative) {
+                System.out.println("Bravo! vous avez gagné : l'IA n'a pas été capable de trouver votre combinaison en moins de " + tentative + " tentatives");
                 break;
             }
         }
+        menu(DEFENSEUR.ordre,devMode);
     }
 }
